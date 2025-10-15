@@ -78,7 +78,6 @@ def avg_yield_temp_range_west(data):
     total_yield = sum(float(row['Yield_tons_per_hectare']) for row in filtered)
     return total_yield / len(filtered)
 
-
 def percentage_wheat_high_yield_south(data):
     """
     Ava: % of Wheat crops in South region with yield > 3.0 tons/hectare.
@@ -112,7 +111,7 @@ def avg_rainfall_east_high_yield(data):
     total_rainfall = sum(float(row['Rainfall_mm']) for row in filtered)
     return total_rainfall / len(filtered)
 
-
+#1
 def most_frequent_crop_high_yield_rain(data):
     """
     Luther: Most frequent crop overall where rainfall > 800mm and yield > 3.5 tons/hectare.
