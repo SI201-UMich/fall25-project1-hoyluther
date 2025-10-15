@@ -1,13 +1,13 @@
-# Name: Kamila Podsiadlo
-# Student ID: [Your ID]
-# Email: kampod@umich.edu
-# Collaborators: Ava Anderson, Luther Hoy, and generative AI (ChatGPT, DeepAI)
+# Name: Luther Hoy
+# Student ID: 54646118
+# Email: luthster@umich.edu
+# Collaborators: Ava Anderson, Kamila Podsiadlo, and generative AI (ChatGPT, DeepAI)
 #
 # Function Authorship:
-# Kamila: load_file, average_maize_northern, percent_maize_east
-# Ava: average_yield_temp, percent_crop_temp
-# Luther: average_rainfall_south, mode_rainfall_crop
-# All: write_results (collaborative)
+# Kamila: avg_yield_maize_north_temp_range, percentage_maize_east_high_rainfall
+# Ava: avg_yield_temp_range_west, percentage_wheat_high_yield_south
+# Luther: avg_rainfall_east_high_yield, most_frequent_crop_high_yield_rain
+# All: def main():, read_csv, write_results_to_txt, mock and edge cases (collaborative)
 
 import csv
 import os
@@ -45,7 +45,6 @@ def avg_yield_maize_north_temp_range(data):
         return 0
     total_yield = sum(float(row['Yield_tons_per_hectare']) for row in filtered)
     return total_yield / len(filtered)
-
 
 def percentage_maize_east_high_rainfall(data):
     """
@@ -111,7 +110,6 @@ def avg_rainfall_east_high_yield(data):
     total_rainfall = sum(float(row['Rainfall_mm']) for row in filtered)
     return total_rainfall / len(filtered)
 
-#1
 def most_frequent_crop_high_yield_rain(data):
     """
     Luther: Most frequent crop overall where rainfall > 800mm and yield > 3.5 tons/hectare.
@@ -136,7 +134,6 @@ def write_results_to_txt(results, filename="agriculture_results.txt"):
         f.write(results)
     print(f"Results written to {filename}")
 
-
 def main():
     csv_filename = "crop_yield.csv"
     print("Reading data from crop_yield.csv...")
@@ -156,14 +153,13 @@ def main():
     results = (
         "AGRICULTURE CROP YIELD ANALYSIS RESULTS\n"
         "----------------------------------------\n"
-        f"1. Avg yield for Maize in North (15–25°C): {kamila_avg_yield:.2f} tons/hectare\n"
+        f"1. Avg yield for Maize in North between range 15–25°C: {kamila_avg_yield:.2f} tons/hectare\n"
         f"2. % of Maize crops in East with rainfall >700mm: {kamila_percent_maize:.2f}%\n"
         f"3. Avg yield in West between range 15–25°C: {ava_avg_yield_west:.2f} tons/hectare\n"
         f"4. % of Wheat in South with yield >3.0 tons/hectare: {ava_percent_wheat_south:.2f}%\n"
         f"5. Avg rainfall in East with yield >3.5 tons/hectare: {luther_avg_rainfall:.2f} mm\n"
         f"6. Most frequent crop where rain > 800mm and yield >3.5 tons/hectare): {luther_most_common_crop}\n"
     )
-
     print("\n" + results)
     write_results_to_txt(results)
 
@@ -197,3 +193,37 @@ if __name__ == "__main__":
     print("\n6. Most frequent crop (rain >800mm & yield >3.5):")
     print(most_frequent_crop_high_yield_rain(mock_data))
 
+    print("\n===== EDGE TEST CASES =====")
+
+    # Empty data
+    empty_data = []
+    print("\nEdge 1 - Empty data:")
+    print("Avg yield:", avg_yield_maize_north_temp_range(empty_data))
+    print("Most frequent crop:", most_frequent_crop_high_yield_rain(empty_data))
+
+    # 2Missing numeric values
+    missing_values_data = [
+        {'Crop': 'Maize', 'Region': 'North', 'Temperature_Celsius': '', 'Yield_tons_per_hectare': '3.2', 'Rainfall_mm': ''},
+        {'Crop': 'Wheat', 'Region': 'South', 'Temperature_Celsius': '20', 'Yield_tons_per_hectare': '', 'Rainfall_mm': '600'}
+    ]
+    print("\nEdge 2 - Missing values:")
+    print("Avg yield:", avg_yield_maize_north_temp_range(missing_values_data))
+    print("Avg rainfall:", avg_rainfall_east_high_yield(missing_values_data))
+
+    # Extremely high/low values
+    extreme_data = [
+        {'Crop': 'Rice', 'Region': 'East', 'Temperature_Celsius': '100', 'Yield_tons_per_hectare': '9.9', 'Rainfall_mm': '2000'},
+        {'Crop': 'Maize', 'Region': 'North', 'Temperature_Celsius': '-10', 'Yield_tons_per_hectare': '0.1', 'Rainfall_mm': '50'},
+    ]
+    print("\nEdge 3 - Extreme values:")
+    print("Most frequent crop:", most_frequent_crop_high_yield_rain(extreme_data))
+    print("Avg yield (Maize, North):", avg_yield_maize_north_temp_range(extreme_data))
+
+    # Only one matching row
+    single_match_data = [
+        {'Crop': 'Maize', 'Region': 'East', 'Temperature_Celsius': '23', 'Yield_tons_per_hectare': '4.1', 'Rainfall_mm': '710'},
+        {'Crop': 'Rice', 'Region': 'South', 'Temperature_Celsius': '22', 'Yield_tons_per_hectare': '2.9', 'Rainfall_mm': '600'}
+    ]
+    print("\nEdge 4 - Single matching row:")
+    print("Percentage Maize East:", percentage_maize_east_high_rainfall(single_match_data))
+    print("Avg rainfall East high yield:", avg_rainfall_east_high_yield(single_match_data))
